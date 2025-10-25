@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  service-a:
+    build: ./bff
+    container_name: bff
+    environment:
+      - PORT=8080
+    ports:
+      - "8080:8080"
+    networks:
+      - appnet
+
+  service-b:
+    build: ./back-end
+    container_name: back-end
+    environment:
+      - SERVICE_A_URL=http://bff:8080/events
+    networks:
+      - appnet
+
+  frontend:
+    build: ./front-end
+    container_name: front-end
+    environment:
+      - SERVICE_A_STREAM_URL=http://localhost:8080/stream
+    ports:
+      - "3000:3000"
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge
